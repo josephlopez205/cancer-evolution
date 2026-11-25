@@ -50,3 +50,9 @@ uv run clonetrace ingest --source geo --accession GSE12345 `
 
 The GEO loader only accepts processed MAF, segment, and clinical TSV files. It rejects raw BAM,
 CRAM, and SRA files and requires an absolute URL for the dataset's verified license.
+
+## Build a cohort table
+
+```powershell
+uv run clonetrace cohort --input-dir data/processed --output-dir data/processed --source gdc
+```

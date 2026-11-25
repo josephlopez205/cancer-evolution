@@ -338,6 +338,7 @@ def ingest_gdc(
         output / "copy_number_segments.tsv",
         [record.model_dump(mode="python") for record in segment_table.records],
     )
+    _write_tsv(output / "clinical.tsv", [])
 
     manifest: dict[str, Any] = {
         "project": project,

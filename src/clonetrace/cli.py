@@ -4,6 +4,7 @@ import typer
 
 from clonetrace import __version__
 from clonetrace.ingest.cbioportal import ingest_cbioportal
+from clonetrace.ingest.cohort import build_cohort_table
 from clonetrace.ingest.gdc import ingest_gdc
 from clonetrace.ingest.geo import ingest_geo
 
@@ -107,3 +108,15 @@ def ingest(
         typer.echo(f"Manifest: {result.manifest}")
         return
     raise typer.BadParameter("supported sources are gdc, cbioportal, and geo")
+
+
+@app.command("cohort")
+def cohort(
+    input_dir: str = typer.Option("data/processed", "--input-dir"),
+    output_dir: str = typer.Option("data/processed", "--output-dir"),
+    source: str = typer.Option("combined", "--source"),
+) -> None:
+    """Build a harmonized cohort table from canonical ingested TSV files."""
+
+    path = build_cohort_table(input_dir=input_dir, output_dir=output_dir, source=source)
+    typer.echo(f"Cohort table: {path}")

@@ -45,3 +45,21 @@ def test_ingest_geo_requires_license_and_processed_dir() -> None:
     )
 
     assert result.exit_code != 0
+
+
+def test_cohort_command_writes_table(tmp_path) -> None:
+    result = runner.invoke(
+        app,
+        [
+            "cohort",
+            "--input-dir",
+            str(tmp_path),
+            "--output-dir",
+            str(tmp_path),
+            "--source",
+            "gdc",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert (tmp_path / "cohort.tsv").exists()

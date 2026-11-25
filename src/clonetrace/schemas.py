@@ -171,6 +171,36 @@ class ClinicalTable(CanonicalModel):
     records: list[ClinicalRecord]
 
 
+class CohortRecord(CanonicalModel):
+    """One sample summary in a harmonized cohort table."""
+
+    sample: str = Field(validation_alias=AliasChoices("sample", "sample_id"))
+    source: str
+    mutation_count: int = Field(default=0, ge=0)
+    segment_count: int = Field(default=0, ge=0)
+    survival_time: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    survival_status: bool | Literal["event", "censored"] | int | None = None
+    therapy: list[str] = Field(default_factory=list)
+
+    @field_validator("sample", "source")
+    @classmethod
+    def validate_nonempty(cls, value: str) -> str:
+        if not value:
+            raise ValueError("must not be empty")
+        return value
+
+    @field_validator("therapy")
+    @classmethod
+    def normalize_therapy(cls, value: list[str]) -> list[str]:
+        return list(dict.fromkeys(item.strip() for item in value if item.strip()))
+
+
+class CohortTable(CanonicalModel):
+    """Canonical collection of cohort sample summaries."""
+
+    records: list[CohortRecord]
+
+
 # Concise aliases for callers that prefer domain names over table-oriented names.
 Mutation = MutationRecord
 Segment = CopyNumberSegment
