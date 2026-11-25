@@ -39,3 +39,14 @@ uv run clonetrace ingest --source cbioportal --study brca_metabric
 
 This caches the public study metadata, mutation, discrete CNA, and clinical responses and writes
 canonical mutation and clinical TSV tables plus a copy-number-call TSV.
+
+## Load a processed GEO dataset
+
+```powershell
+uv run clonetrace ingest --source geo --accession GSE12345 `
+  --processed-dir data/external/gse12345 `
+  --license-url https://example.org/verified-license
+```
+
+The GEO loader only accepts processed MAF, segment, and clinical TSV files. It rejects raw BAM,
+CRAM, and SRA files and requires an absolute URL for the dataset's verified license.

@@ -36,3 +36,12 @@ def test_ingest_cbioportal_requires_study() -> None:
     )
 
     assert result.exit_code != 0
+
+
+def test_ingest_geo_requires_license_and_processed_dir() -> None:
+    result = runner.invoke(
+        app,
+        ["ingest", "--source", "geo", "--accession", "GSE12345"],
+    )
+
+    assert result.exit_code != 0
