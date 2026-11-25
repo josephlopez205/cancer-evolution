@@ -147,7 +147,7 @@ Legend: `[ ]` not started, `[x]` done, `[REVIEW]` needs human approval of the pl
 
 - [x] **P1-T1** Define canonical schemas in `schemas.py`: mutations (sample, gene, chrom, pos, ref, alt, ref_count, alt_count), copy number (segments, total/minor CN), clinical (sample, survival, therapy).
 - [x] **P1-T2** `ingest/gdc.py`: download open-tier MAF, CN segments, clinical data by project ID; cache and checksum.
-- [ ] **P1-T3** `ingest/cbioportal.py`: pull study data via the public API.
+- [x] **P1-T3** `ingest/cbioportal.py`: pull study data via the public API.
 - [ ] **P1-T4** `ingest/geo.py`: loader for a processed multi-region or longitudinal dataset.
 - [ ] **P1-T5** Cohort tables and data dictionary. Output: `docs/data_dictionary.md`.
 
@@ -288,3 +288,4 @@ Every PR must include: passing CI, new or updated tests, and a short note descri
 | 2026-11-26 | Scaffolded the CloneTrace Python package. | P0-T4 selected the `src/` package layout, Typer CLI, Pydantic schema module, pytest suite, Ruff/mypy pre-commit checks, GitHub Actions CI, MIT license, and README. This establishes a minimal installable/testable baseline before data and pipeline implementation. | Project owner |
 | 2026-11-26 | Added canonical Pydantic schemas for P1-T1. | Mutation, copy-number segment, survival, and clinical-record models validate required identifiers and numeric bounds; chromosome and allele normalization is consistent; unknown fields are rejected. | Project owner |
 | 2026-11-26 | Implemented GDC open-tier ingestion for P1-T2. | The ingester filters GDC files by project and `access=open`, caches downloads by file ID, verifies MD5 and size, exports canonical MAF and segment TSV tables, and writes a SHA-256/MD5 manifest. Clinical files are cached and included in the manifest pending P1-T5 harmonization. | Project owner |
+| 2026-11-26 | Implemented cBioPortal public-study ingestion for P1-T3. | The ingester reads study metadata and molecular profiles, fetches detailed mutations and discrete CNA calls, paginates clinical data, caches API responses, exports canonical mutation/clinical TSVs and CNA calls, and writes a SHA-256 manifest. | Project owner |

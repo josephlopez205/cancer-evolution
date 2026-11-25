@@ -30,3 +30,12 @@ uv run clonetrace ingest --source gdc --project TCGA-BRCA
 
 This caches open-tier MAF, copy-number, and clinical files under `data/gdc/`, writes canonical
 mutation and segment tables under `data/processed/`, and verifies file size and MD5 checksums.
+
+## Ingest a public cBioPortal study
+
+```powershell
+uv run clonetrace ingest --source cbioportal --study brca_metabric
+```
+
+This caches the public study metadata, mutation, discrete CNA, and clinical responses and writes
+canonical mutation and clinical TSV tables plus a copy-number-call TSV.

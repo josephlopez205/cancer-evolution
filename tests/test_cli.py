@@ -27,3 +27,12 @@ def test_ingest_rejects_unknown_source() -> None:
     )
 
     assert result.exit_code != 0
+
+
+def test_ingest_cbioportal_requires_study() -> None:
+    result = runner.invoke(
+        app,
+        ["ingest", "--source", "cbioportal"],
+    )
+
+    assert result.exit_code != 0
