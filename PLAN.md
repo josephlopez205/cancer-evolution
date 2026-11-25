@@ -146,12 +146,12 @@ Legend: `[ ]` not started, `[x]` done, `[REVIEW]` needs human approval of the pl
 ### Phase 1: Data acquisition and harmonization (Weeks 3–4)
 
 - [x] **P1-T1** Define canonical schemas in `schemas.py`: mutations (sample, gene, chrom, pos, ref, alt, ref_count, alt_count), copy number (segments, total/minor CN), clinical (sample, survival, therapy).
-- [x] **P1-T2** `ingest/gdc.py`: download open-tier MAF, CN segments, clinical data by project ID; cache and checksum.
+- [x] **P1-T2** `ingest/gdc.py`: access open-tier MAF, allele-specific CN segments, and clinical fields through the GDC API by project ID; do not persist source files locally; checksum and produce canonical/cohort tables.
 - [x] **P1-T3** `ingest/cbioportal.py`: pull study data via the public API.
 - [x] **P1-T4** `ingest/geo.py`: loader for a processed multi-region or longitudinal dataset.
 - [x] **P1-T5** Cohort tables and data dictionary. Output: `docs/data_dictionary.md`.
 
-**Done when:** `clonetrace ingest --source gdc --project <ID>` reproduces cohort tables from scratch; schema validation tests pass; no controlled-access files are referenced.
+**Done when:** `clonetrace ingest --source gdc --project <ID>` reproduces mutation, copy-number, clinical, and cohort tables through the API without persisting source files locally; schema validation tests pass; no controlled-access files are referenced.
 
 ### Phase 2: Simulation benchmark (Weeks 5–6)
 
@@ -287,7 +287,7 @@ Every PR must include: passing CI, new or updated tests, and a short note descri
 | 2026-11-26 | Recorded an initial open-data inventory for D1-D5 in `data/SOURCES.md`. | D1-D2 have identified open/public primary sources; D3 remains blocked until a specific open-tier PCAWG record is verified, D4 until an exact processed study/record is selected and licensed, and D5 until a specific release and terms are checked. This prevents public portal availability from being mistaken for a verified download license. | Project owner |
 | 2026-11-26 | Scaffolded the CloneTrace Python package. | P0-T4 selected the `src/` package layout, Typer CLI, Pydantic schema module, pytest suite, Ruff/mypy pre-commit checks, GitHub Actions CI, MIT license, and README. This establishes a minimal installable/testable baseline before data and pipeline implementation. | Project owner |
 | 2026-11-26 | Added canonical Pydantic schemas for P1-T1. | Mutation, copy-number segment, survival, and clinical-record models validate required identifiers and numeric bounds; chromosome and allele normalization is consistent; unknown fields are rejected. | Project owner |
-| 2026-11-26 | Implemented GDC open-tier ingestion for P1-T2. | The ingester filters GDC files by project and `access=open`, caches downloads by file ID, verifies MD5 and size, exports canonical MAF and segment TSV tables, and writes a SHA-256/MD5 manifest. Clinical files are cached and included in the manifest pending P1-T5 harmonization. | Project owner |
+| 2026-11-26 | Corrected and verified API-only GDC ingestion for P1-T2. | The ingester filters to open masked MAF and allele-specific segment file types, streams source content through the GDC API into memory without caching raw data locally, fetches public clinical fields through the Cases API, and writes canonical mutation, segment, clinical, and cohort tables with source checksums in a manifest. | Project owner |
 | 2026-11-26 | Implemented cBioPortal public-study ingestion for P1-T3. | The ingester reads study metadata and molecular profiles, fetches detailed mutations and discrete CNA calls, paginates clinical data, caches API responses, exports canonical mutation/clinical TSVs and CNA calls, and writes a SHA-256 manifest. | Project owner |
 | 2026-11-26 | Implemented a processed GEO/longitudinal loader for P1-T4. | The loader requires a valid GSE accession and verified license URL, excludes BAM/CRAM/SRA raw reads, caches processed files by SHA-256, exports canonical mutation/segment/clinical tables, and records source provenance in a manifest. | Project owner |
 | 2026-11-26 | Added cohort table and data dictionary support for P1-T5. | A source-independent cohort builder derives sample union counts and clinical fields from canonical TSV tables; `docs/data_dictionary.md` documents table columns, units, identifiers, and open-data boundaries. | Project owner |

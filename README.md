@@ -28,8 +28,10 @@ uv run clonetrace --help
 uv run clonetrace ingest --source gdc --project TCGA-BRCA
 ```
 
-This caches open-tier MAF, copy-number, and clinical files under `data/gdc/`, writes canonical
-mutation and segment tables under `data/processed/`, and verifies file size and MD5 checksums.
+GDC open-tier file contents are fetched through the public API and processed in memory; raw files
+are not cached or persisted locally. Canonical mutation, segment, clinical, and cohort tables are
+written under `data/processed/`, and source file checksums are recorded in the manifest. Clinical
+fields are fetched from the public GDC Cases API.
 
 ## Ingest a public cBioPortal study
 

@@ -41,13 +41,21 @@ def ingest(
     license_url: str = typer.Option(
         "", "--license-url", help="Verified processed-data license URL"
     ),
-    cache_dir: str = typer.Option("data/gdc", "--cache-dir", help="GDC download cache"),
+    cache_dir: str = typer.Option(
+        "data/cache",
+        "--cache-dir",
+        help="Response cache for supported sources; GDC source files are never cached",
+    ),
     output_dir: str = typer.Option(
         "data/processed",
         "--output-dir",
         help="Canonical output directory",
     ),
-    force: bool = typer.Option(False, "--force", help="Redownload cached files"),
+    force: bool = typer.Option(
+        False,
+        "--force",
+        help="Refresh cached response data for cBioPortal or GEO",
+    ),
 ) -> None:
     """Download and harmonize data from an approved open source."""
 
@@ -96,15 +104,15 @@ def ingest(
             raise typer.BadParameter("--project is required for --source gdc")
         result = ingest_gdc(
             project=project,
-            cache_dir=cache_dir,
             output_dir=output_dir,
-            force=force,
         )
         typer.echo(
             f"Ingested {result.project}: "
             f"{result.mutation_count} mutations, "
-            f"{result.segment_record_count} copy-number segments"
+            f"{result.segment_record_count} copy-number segments, "
+            f"{result.clinical_count} clinical records"
         )
+        typer.echo(f"Cohort table: {result.output_dir / 'cohort.tsv'}")
         typer.echo(f"Manifest: {result.manifest}")
         return
     raise typer.BadParameter("supported sources are gdc, cbioportal, and geo")

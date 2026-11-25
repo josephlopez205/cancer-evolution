@@ -1,13 +1,18 @@
 import csv
 import hashlib
+import json
+import urllib.parse
 
 import pytest
 
 from clonetrace.ingest.gdc import (
     GdcFile,
-    download_open_file,
+    fetch_open_file,
     ingest_gdc,
+    parse_clinical_cases,
     parse_maf,
+    parse_maf_content,
+    parse_segment_content,
     parse_segments,
     search_open_files,
 )
@@ -26,9 +31,11 @@ def test_search_open_files_only_accepts_api_hits(monkeypatch: pytest.MonkeyPatch
                         "file_id": "maf-1",
                         "file_name": "sample.maf.gz",
                         "md5sum": "abc",
-                        "size": 10,
+                        "file_size": 10,
                         "data_category": "Simple Nucleotide Variation",
                         "data_type": "Masked Somatic Mutation",
+                        "data_format": "MAF",
+                        "access": "open",
                     }
                 ],
                 "pagination": {"total": 1},
@@ -37,13 +44,31 @@ def test_search_open_files_only_accepts_api_hits(monkeypatch: pytest.MonkeyPatch
 
     monkeypatch.setattr("clonetrace.ingest.gdc._get_json", fake_get)
 
-    files = search_open_files("TCGA-BRCA", "Simple Nucleotide Variation")
+    files = search_open_files("TCGA-BRCA", "Masked Somatic Mutation", "MAF")
 
     assert len(files) == 1
     assert files[0].file_id == "maf-1"
+    assert files[0].size == 10
     assert len(calls) == 1
-    assert "TCGA-BRCA" in calls[0]
-    assert "%22open%22" in calls[0]
+    query = urllib.parse.parse_qs(urllib.parse.urlparse(calls[0]).query)
+    filters = json.loads(query["filters"][0])
+    filter_contents = filters["content"]
+    assert {
+        "op": "in",
+        "content": {"field": "cases.project.project_id", "value": ["TCGA-BRCA"]},
+    } in filter_contents
+    assert {
+        "op": "in",
+        "content": {"field": "access", "value": ["open"]},
+    } in filter_contents
+    assert {
+        "op": "in",
+        "content": {"field": "data_type", "value": ["Masked Somatic Mutation"]},
+    } in filter_contents
+    assert {
+        "op": "in",
+        "content": {"field": "data_format", "value": ["MAF"]},
+    } in filter_contents
 
 
 def test_parse_maf(tmp_path) -> None:
@@ -120,30 +145,93 @@ def test_parse_segments(tmp_path) -> None:
     assert segments[0].minor_cn == 1
 
 
-def test_download_open_file_uses_cache_and_md5(tmp_path, monkeypatch) -> None:
-    cache = tmp_path / "cache"
-    cached = cache / "file-1" / "sample.maf"
-    cached.parent.mkdir(parents=True)
-    cached.write_text("sample", encoding="utf-8")
-    md5 = hashlib.md5(cached.read_bytes()).hexdigest()
+def test_fetch_open_file_verifies_checksums_without_persisting(monkeypatch) -> None:
+    content = b"sample"
+    md5 = hashlib.md5(content).hexdigest()
     file = GdcFile(
         file_id="file-1",
         file_name="sample.maf",
         md5sum=md5,
-        size=cached.stat().st_size,
+        size=len(content),
         data_category="Simple Nucleotide Variation",
         data_type="Masked Somatic Mutation",
     )
 
-    def unexpected_download(*args, **kwargs) -> None:
-        raise AssertionError("cached file should not be downloaded")
+    class Response:
+        def __enter__(self):
+            return self
 
-    monkeypatch.setattr("urllib.request.urlopen", unexpected_download)
+        def __exit__(self, *args):
+            return None
 
-    result = download_open_file(file, cache)
+        def read(self):
+            return content
 
-    assert result == cached
-    assert result.read_text(encoding="utf-8") == "sample"
+    monkeypatch.setattr("urllib.request.urlopen", lambda *args, **kwargs: Response())
+
+    result = fetch_open_file(file)
+
+    assert result == content
+
+
+def test_fetch_open_file_rejects_non_open_metadata(monkeypatch) -> None:
+    file = GdcFile(
+        file_id="file-1",
+        file_name="sample.maf",
+        md5sum="",
+        size=0,
+        data_category="Simple Nucleotide Variation",
+        data_type="Masked Somatic Mutation",
+        access="controlled",
+    )
+    with pytest.raises(ValueError, match="non-open"):
+        fetch_open_file(file)
+
+
+def test_parse_api_content_in_memory() -> None:
+    maf = (
+        b"#version gdc-1.0.0\n"
+        b"#tumor.aliquot fake-uuid\n"
+        b"Hugo_Symbol\tTumor_Sample_Barcode\tChromosome\tStart_Position\t"
+        b"Reference_Allele\tTumor_Seq_Allele2\tt_ref_count\tt_alt_count\n"
+        b"TP53\tTCGA-01-0001-01A\t17\t100\tC\tT\t30\t10\n"
+    )
+    mutations = parse_maf_content(maf, "sample.maf")
+    assert mutations[0].sample == "TCGA-01-0001-01A"
+
+    segments = (
+        b"GDC_Aliquot\tChromosome\tStart\tEnd\tCopy_Number\tMajor_Copy_Number\tMinor_Copy_Number\n"
+        b"aliquot-1\tchr17\t100\t500\t3\t2\t1\n"
+    )
+    parsed_segments = parse_segment_content(
+        segments,
+        "sample.seg.txt",
+        {"aliquot-1": "TCGA-01-0001-01A"},
+    )
+    assert parsed_segments[0].sample == "TCGA-01-0001-01A"
+    assert parsed_segments[0].minor_cn == 1
+
+
+def test_parse_clinical_cases_maps_survival_and_therapy() -> None:
+    records = parse_clinical_cases(
+        [
+            {
+                "submitter_id": "TCGA-01-0001",
+                "samples": [{"submitter_id": "TCGA-01-0001-01A"}],
+                "demographic": {"vital_status": "Dead", "days_to_death": 100},
+                "diagnoses": [
+                    {
+                        "days_to_last_follow_up": None,
+                        "treatments": [{"treatment_type": "Chemotherapy"}],
+                    }
+                ],
+            }
+        ]
+    )
+    assert records[0].sample == "TCGA-01-0001-01A"
+    assert records[0].survival_time == 100
+    assert records[0].survival_status == "event"
+    assert records[0].therapy == ["Chemotherapy"]
 
 
 def test_ingest_gdc_writes_manifest_and_tables(
@@ -184,23 +272,66 @@ def test_ingest_gdc_writes_manifest_and_tables(
         "Copy Number Segment",
     )
 
-    def fake_search(project: str, category: str, page_size: int = 100) -> list[GdcFile]:
-        if category == "Simple Nucleotide Variation":
+    def fake_search(
+        project: str,
+        data_type: str,
+        data_format: str | None = None,
+        include_sample_map: bool = False,
+        page_size: int = 100,
+    ) -> list[GdcFile]:
+        if data_type == "Masked Somatic Mutation":
             return [maf_file]
-        if category == "Copy Number Variation":
+        if data_type == "Allele-specific Copy Number Segment":
             return [seg_file]
         return []
 
-    def fake_download(file: GdcFile, cache_dir, force: bool = False):
-        return maf if file.file_id == "maf-1" else seg
+    def fake_fetch(file: GdcFile) -> bytes:
+        return maf.read_bytes() if file.file_id == "maf-1" else seg.read_bytes()
 
     monkeypatch.setattr("clonetrace.ingest.gdc.search_open_files", fake_search)
-    monkeypatch.setattr("clonetrace.ingest.gdc.download_open_file", fake_download)
+    monkeypatch.setattr("clonetrace.ingest.gdc.fetch_open_file", fake_fetch)
+    monkeypatch.setattr(
+        "clonetrace.ingest.gdc.fetch_open_cases",
+        lambda project: [
+            {
+                "submitter_id": "TCGA-01",
+                "samples": [{"submitter_id": "TCGA-01-0001-01A"}],
+                "demographic": {"vital_status": "Alive"},
+                "diagnoses": [],
+            }
+        ],
+    )
 
-    result = ingest_gdc("TCGA-BRCA", cache_dir=cache, output_dir=output)
+    seg_file = GdcFile(
+        "seg-1",
+        "test.seg.txt",
+        "",
+        seg.stat().st_size,
+        "Copy Number Variation",
+        "Allele-specific Copy Number Segment",
+        "TXT",
+        "open",
+        {"aliquot-1": "TCGA-01-0001-01A"},
+    )
+
+    result = ingest_gdc("TCGA-BRCA", output_dir=output)
 
     assert result.mutation_count == 1
     assert result.segment_record_count == 1
+    assert result.clinical_count == 1
     assert result.manifest.exists()
     assert (output / "mutations.tsv").exists()
     assert (output / "copy_number_segments.tsv").exists()
+    assert (output / "clinical.tsv").exists()
+    assert (output / "cohort.tsv").exists()
+    assert not cache.exists()
+    assert {path.name for path in output.iterdir()} == {
+        "mutations.tsv",
+        "copy_number_segments.tsv",
+        "clinical.tsv",
+        "cohort.tsv",
+        "manifest.json",
+    }
+    manifest = json.loads(result.manifest.read_text(encoding="utf-8"))
+    assert manifest["raw_files_persisted"] is False
+    assert all(item["access"] == "open" for item in manifest["files"])

@@ -55,6 +55,8 @@ Canonical clinical records are one row per sample.
 | `therapy` | comma-separated string | no | Normalized therapy labels |
 
 The source-specific unit for `survival_time` must be preserved and documented in the source manifest.
+GDC-derived `survival_time` is in days (`days_to_death` or `days_to_last_follow_up`); the loader does
+not convert it.
 P1-T5 does not infer survival status where the source does not provide a valid outcome.
 
 ## `cohort.tsv`

@@ -104,9 +104,6 @@ def build_cohort_table(
         "therapy",
     ]
     with path.open("w", encoding="utf-8", newline="") as handle:
-        if not records:
-            handle.write("")
-            return path
         writer = csv.DictWriter(handle, fieldnames=fieldnames, delimiter="\t")
         writer.writeheader()
         for record in records:
