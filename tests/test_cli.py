@@ -18,3 +18,12 @@ def test_version() -> None:
 
     assert result.exit_code == 0
     assert result.stdout.strip() == f"clonetrace {__version__}"
+
+
+def test_ingest_rejects_unknown_source() -> None:
+    result = runner.invoke(
+        app,
+        ["ingest", "--source", "tcga", "--project", "TCGA-BRCA"],
+    )
+
+    assert result.exit_code != 0

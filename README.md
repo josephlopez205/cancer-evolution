@@ -21,3 +21,12 @@ The command-line entry point can be checked with:
 ```powershell
 uv run clonetrace --help
 ```
+
+## Ingest open GDC data
+
+```powershell
+uv run clonetrace ingest --source gdc --project TCGA-BRCA
+```
+
+This caches open-tier MAF, copy-number, and clinical files under `data/gdc/`, writes canonical
+mutation and segment tables under `data/processed/`, and verifies file size and MD5 checksums.
