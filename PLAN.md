@@ -165,11 +165,16 @@ Legend: `[ ]` not started, `[x]` done, `[REVIEW]` needs human approval of the pl
 
 - [x] **P3-T1** `qc`: purity and ploidy handling (ingest estimates; optional re-estimation), VAF adjustment for copy number and multiplicity.
 - [x] **P3-T2** `cluster/baseline.py`: Bayesian binomial mixture baseline (own implementation).
-- [ ] **P3-T3** `cluster/pyclonevi.py`: wrapper with standardized input and output.
-- [ ] **P3-T4** `cluster/mobster.py`: wrapper, or document the integration route if R interop is required.
-- [ ] **P3-T5** CLI commands `qc` and `cluster`; unit tests plus a smoke test on simulated data.
+- [x] **P3-T3** `cluster/pyclonevi.py`: wrapper with standardized input and output.
+- [x] **P3-T4** `cluster/mobster.py`: wrapper, or document the integration route if R interop is required.
+- [x] **P3-T5** CLI commands `qc` and `cluster`; unit tests plus a smoke test on simulated data.
 
 **Done when:** each clustering method runs end-to-end on one simulated dataset and one real sample through the CLI, with identical output schemas.
+
+**Phase acceptance pending:** the CLI smoke test covers the baseline on simulated data, while
+PyClone-VI CLI output normalization is tested with a stubbed wrapper. A real sample and an
+installed PyClone-VI executable are not available in this environment; MOBSTER remains an
+external route without a CloneTrace assignment adapter.
 
 ### Phase 4: Consensus, trees, timing (Weeks 10–11)
 
@@ -272,7 +277,7 @@ Every PR must include: passing CI, new or updated tests, and a short note descri
 
 - [x] Primary cancer type: breast invasive carcinoma (TCGA-BRCA), chosen from open-data availability and cohort size.
 - [x] Validation cohort: METABRIC breast cancer (cBioPortal `brca_metabric`).
-- [ ] Whether MOBSTER is included in v1.0 or deferred.
+- [x] Whether MOBSTER is included in v1.0 or deferred: deferred pending a version-pinned, tested R adapter.
 - [ ] Minimum coverage and purity thresholds for sample inclusion.
 - [ ] Final package name and PyPI availability.
 - [ ] Charting library for the viewer (Plotly vs. Recharts) and whether clone trees use plain D3 or a graph library.
@@ -297,3 +302,7 @@ Every PR must include: passing CI, new or updated tests, and a short note descri
 | 2026-11-28 | Approved an initial scientific-viewer slice using simulator output only. | The first UI preview displays a bundled, clearly labeled Phase 2 simulated sample. It does not claim to implement the versioned export contract, inferred cohort/sample results, or the full P7-T3/P7-T4 scope; those remain pending their data contracts and pipeline outputs. | Project owner |
 | 2026-11-28 | Implemented QC estimate loading and purity/CN-aware VAF calculations for P3-T1. | An explicit TSV reader validates externally supplied purity/ploidy estimates and provenance; expected VAF and inverse CCF calculations account for purity, total copy number, and mutation multiplicity. Optional purity/ploidy re-estimation is deferred. | Project owner |
 | 2026-11-28 | Implemented the Bayesian binomial mixture baseline for P3-T2. | A deterministic variational finite mixture uses Beta priors for component VAFs and a symmetric Dirichlet prior for mixture weights, compares component counts by ELBO, and reports posterior assignment probabilities and component summaries. | Project owner |
+| 2026-11-28 | Implemented the optional PyClone-VI subprocess wrapper for P3-T3. | The wrapper writes documented PyClone-VI input columns from canonical mutations plus explicit copy-number/purity annotations, runs `fit` and `write-results-file` without a shell, validates output assignments, and retains run artifacts. PyClone-VI remains a separately installed GPL-3 tool. | Project owner |
+| 2026-11-28 | Deferred a runnable MOBSTER wrapper and documented its integration route for P3-T4. | MOBSTER is an external GPL-3 R package requiring R 4.0+; this environment has no `Rscript` or `rpy2`. Its API expects purity/CN-adjusted VAFs, and reliable extraction of per-mutation assignment confidence from its S3 fit object has not been validated. Keep the tool optional until a version-pinned adapter is tested. | Project owner |
+| 2026-11-28 | Ran a version-pinned MOBSTER smoke fit on a CloneTrace simulated sample. | MOBSTER 1.0.0 completed with 80 purity/CN-adjusted simulated mutations and retained its fit and session metadata. The run verifies external execution only; it does not implement a CloneTrace wrapper or establish biological findings. | Project owner |
+| 2026-11-28 | Added `qc` and `cluster` CLI commands for P3-T5. | QC consumes explicit per-mutation purity/CN/multiplicity annotations and preserves CCF estimates above 1; baseline and PyClone-VI use a shared assignment TSV schema. Simulated CLI tests pass, but phase-level real-sample validation and an installed PyClone-VI run remain pending. | Project owner |

@@ -97,4 +97,43 @@ The Python API `clonetrace.cluster.fit_binomial_mixture` clusters read counts fr
 It uses Beta priors for component VAFs, a symmetric Dirichlet prior for mixture weights, and
 variational posterior assignment probabilities. Candidate cluster counts are compared using the
 variational evidence lower bound. Component means are observed VAFs; copy-number and purity
-adjustments remain separate QC inputs, and a CLI command is planned for P3-T5.
+adjustments remain separate QC inputs; see the QC and clustering CLI commands below.
+
+## QC and clustering CLI
+
+The QC command reads canonical mutation columns plus per-mutation `purity`, `total_cn`, and
+`multiplicity` annotations. It writes observed VAF and estimated CCF without clipping estimates
+above 1:
+
+```powershell
+clonetrace qc --input mutations_with_qc.tsv --output qc.tsv
+```
+
+Cluster one sample with the built-in baseline:
+
+```powershell
+clonetrace cluster --input mutations.tsv --output assignments.tsv --method baseline
+```
+
+The optional PyClone-VI method additionally requires `major_cn`, `minor_cn`, `normal_cn`, and
+`tumour_content` columns on every mutation row. Its external input, fit, and result files are
+retained beside the normalized assignments TSV. Both methods write the same assignment columns;
+MOBSTER remains an external integration route without a CloneTrace CLI adapter.
+
+## PyClone-VI integration
+
+The optional `clonetrace.cluster.run_pyclonevi` wrapper invokes the external `pyclone-vi`
+executable in two stages and normalizes its TSV output into CloneTrace mutation assignments.
+Install PyClone-VI separately using its
+[upstream installation instructions](https://github.com/Roth-Lab/pyclone-vi#installation);
+it is not a dependency of the CloneTrace Python environment.
+
+Each input mutation must be paired with explicit major/minor tumor copy number, normal copy
+number, and tumor content via `PyCloneObservation`. The wrapper does not guess segment overlap,
+sex-chromosome copy number, or purity defaults. It retains the prepared input, HDF5 fit, and
+normalized-tool TSV in the requested output directory. The external tool's own license and
+installation requirements apply.
+
+A seeded MOBSTER smoke fit has completed on simulated data, but MOBSTER is still an optional
+external R integration rather than a runnable CloneTrace wrapper. See
+[docs/mobster_integration.md](docs/mobster_integration.md) for the run record and adapter limits.

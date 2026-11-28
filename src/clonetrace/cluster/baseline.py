@@ -14,7 +14,9 @@ class MutationClusterAssignment:
     mutation: MutationRecord
     cluster_id: int
     posterior_probability: float
-    cluster_probabilities: tuple[float, ...]
+    cluster_probabilities: tuple[float, ...] | None
+    cellular_prevalence: float | None = None
+    cellular_prevalence_std: float | None = None
 
 
 @dataclass(frozen=True)
