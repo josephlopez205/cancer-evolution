@@ -66,3 +66,13 @@ uv run clonetrace simulate --seed 42 --depth 100 --purity 0.8 --clones 3 --topol
 ```
 
 The command writes canonical mutation and copy-number TSV files plus `ground_truth.json` and a SHA-256 manifest under `data/simulated/`.
+
+## Generate the benchmark scenario grid
+
+```powershell
+uv run clonetrace simulate-grid --seed 1 --replicates 20 --mutations 40
+```
+
+This generates all depth, purity, clone-count, and topology combinations specified in P2-T2,
+with 20 seeded replicates per scenario. The grid index and aggregate manifest are written under
+`data/simulated/grid/`.

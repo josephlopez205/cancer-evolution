@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from clonetrace.simulate import simulate
+from clonetrace.simulate import generate_scenario_grid, simulate
 
 
 def test_simulator_is_deterministic(tmp_path) -> None:
@@ -88,3 +88,59 @@ def test_simulator_rejects_invalid_config(tmp_path, field: str, value: float) ->
 
     with pytest.raises(ValueError):
         simulate(tmp_path, **kwargs)
+
+
+def test_scenario_grid_is_reproducible_and_indexed(tmp_path) -> None:
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+
+    result_one = generate_scenario_grid(
+        first,
+        seed=23,
+        replicates=2,
+        mutation_count=10,
+        depths=(30, 60),
+        purities=(0.3, 0.8),
+        clone_counts=(1, 3),
+        topologies=("linear", "branching"),
+    )
+    generate_scenario_grid(
+        second,
+        seed=23,
+        replicates=2,
+        mutation_count=10,
+        depths=(30, 60),
+        purities=(0.3, 0.8),
+        clone_counts=(1, 3),
+        topologies=("linear", "branching"),
+    )
+
+    assert result_one.scenario_count == 16
+    assert result_one.replicate_count == 2
+    assert result_one.index_path.read_bytes() == (second / "scenario_index.tsv").read_bytes()
+    assert result_one.manifest_path.read_bytes() == (second / "scenario_manifest.json").read_bytes()
+
+    index_rows = result_one.index_path.read_text(encoding="utf-8").splitlines()
+    assert len(index_rows) == 33
+
+    manifest = json.loads(result_one.manifest_path.read_text(encoding="utf-8"))
+    assert manifest["total_simulations"] == 32
+    assert manifest["scenario_count"] == 16
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("replicates", 0),
+        ("depths", ()),
+        ("purities", (1.1,)),
+        ("clone_counts", (0,)),
+        ("topologies", ("unrooted",)),
+    ],
+)
+def test_scenario_grid_rejects_invalid_config(tmp_path, field: str, value: object) -> None:
+    kwargs: dict[str, object] = {}
+    kwargs[field] = value
+
+    with pytest.raises((ValueError, TypeError)):
+        generate_scenario_grid(tmp_path, **kwargs)

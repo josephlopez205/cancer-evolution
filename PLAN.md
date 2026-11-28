@@ -156,7 +156,7 @@ Legend: `[ ]` not started, `[x]` done, `[REVIEW]` needs human approval of the pl
 ### Phase 2: Simulation benchmark (Weeks 5–6)
 
 - [x] **P2-T1** `simulate/simulator.py`: generate clone trees, mutation assignments, read counts with configurable depth, purity, clone count, and copy-number events; save ground truth alongside data.
-- [ ] **P2-T2** Scenario grid: depth {30x, 60x, 100x, 200x}, purity {0.3, 0.5, 0.8}, clones {1–6}, topology {linear, branching}, 20 replicates each, seeded.
+- [x] **P2-T2** Scenario grid: depth {30x, 60x, 100x, 200x}, purity {0.3, 0.5, 0.8}, clones {1–6}, topology {linear, branching}, 20 replicates each, seeded.
 - [ ] **P2-T3** `benchmark/metrics.py`: clone-count error, adjusted Rand index, tree edit distance (or ancestor-descendant accuracy), calibration of reported uncertainty.
 
 **Done when:** the simulator is deterministic by seed; metrics are tested against hand-computed toy cases.
@@ -292,3 +292,4 @@ Every PR must include: passing CI, new or updated tests, and a short note descri
 | 2026-11-26 | Implemented a processed GEO/longitudinal loader for P1-T4. | The loader requires a valid GSE accession and verified license URL, excludes BAM/CRAM/SRA raw reads, caches processed files by SHA-256, exports canonical mutation/segment/clinical tables, and records source provenance in a manifest. | Project owner |
 | 2026-11-26 | Added cohort table and data dictionary support for P1-T5. | A source-independent cohort builder derives sample union counts and clinical fields from canonical TSV tables; `docs/data_dictionary.md` documents table columns, units, identifiers, and open-data boundaries. | Project owner |
 | 2026-11-28 | Implemented the deterministic clonal simulator for P2-T1. | The simulator generates linear or branching clone trees, clone mutation assignments, binomial read counts, configurable purity/depth/clones/copy-number events, canonical mutation and segment TSVs, ground-truth JSON, and a SHA-256 manifest from a fixed seed. | Project owner |
+| 2026-11-28 | Implemented the benchmark scenario grid for P2-T2. | The grid covers 30x/60x/100x/200x depth, 0.3/0.5/0.8 purity, 1–6 clones, and linear/branching topology with 20 seeded replicates by default. It writes a TSV index and aggregate JSON manifest. | Project owner |

@@ -9,7 +9,7 @@ from clonetrace.ingest.cbioportal import ingest_cbioportal
 from clonetrace.ingest.cohort import build_cohort_table
 from clonetrace.ingest.gdc import ingest_gdc
 from clonetrace.ingest.geo import ingest_geo
-from clonetrace.simulate import simulate
+from clonetrace.simulate import generate_scenario_grid, simulate
 
 app = typer.Typer(
     name="clonetrace",
@@ -163,3 +163,26 @@ def simulate_command(
         f"{result.clone_count} clones"
     )
     typer.echo(f"Ground truth: {result.ground_truth_path}")
+
+
+@app.command("simulate-grid")
+def simulate_grid_command(
+    output_dir: str = typer.Option("data/simulated/grid", "--output-dir"),
+    seed: int = typer.Option(1, "--seed"),
+    replicates: int = typer.Option(20, "--replicates"),
+    mutation_count: int = typer.Option(40, "--mutations"),
+) -> None:
+    """Generate the reproducible benchmark scenario grid."""
+
+    result = generate_scenario_grid(
+        output_dir=output_dir,
+        seed=seed,
+        replicates=replicates,
+        mutation_count=mutation_count,
+    )
+    typer.echo(
+        f"Generated {result.scenario_count * result.replicate_count} simulations "
+        f"from {result.scenario_count} scenarios"
+    )
+    typer.echo(f"Scenario index: {result.index_path}")
+    typer.echo(f"Scenario manifest: {result.manifest_path}")

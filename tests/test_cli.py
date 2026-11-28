@@ -92,3 +92,24 @@ def test_simulate_command_writes_ground_truth(tmp_path) -> None:
     assert (tmp_path / "copy_number_segments.tsv").exists()
     assert (tmp_path / "ground_truth.json").exists()
     assert (tmp_path / "manifest.json").exists()
+
+
+def test_simulate_grid_command_writes_index(tmp_path) -> None:
+    result = runner.invoke(
+        app,
+        [
+            "simulate-grid",
+            "--output-dir",
+            str(tmp_path),
+            "--seed",
+            "5",
+            "--replicates",
+            "1",
+            "--mutations",
+            "10",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert (tmp_path / "scenario_index.tsv").exists()
+    assert (tmp_path / "scenario_manifest.json").exists()
