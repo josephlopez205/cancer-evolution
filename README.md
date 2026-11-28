@@ -90,3 +90,11 @@ npm run dev
 ```
 
 See [viewer/README.md](viewer/README.md) for validation commands and the current data limitations.
+
+## Bayesian binomial clustering baseline
+
+The Python API `clonetrace.cluster.fit_binomial_mixture` clusters read counts from one sample.
+It uses Beta priors for component VAFs, a symmetric Dirichlet prior for mixture weights, and
+variational posterior assignment probabilities. Candidate cluster counts are compared using the
+variational evidence lower bound. Component means are observed VAFs; copy-number and purity
+adjustments remain separate QC inputs, and a CLI command is planned for P3-T5.

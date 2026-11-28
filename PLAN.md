@@ -164,7 +164,7 @@ Legend: `[ ]` not started, `[x]` done, `[REVIEW]` needs human approval of the pl
 ### Phase 3: Core pipeline (Weeks 7–9)
 
 - [x] **P3-T1** `qc`: purity and ploidy handling (ingest estimates; optional re-estimation), VAF adjustment for copy number and multiplicity.
-- [ ] **P3-T2** `cluster/baseline.py`: Bayesian binomial mixture baseline (own implementation).
+- [x] **P3-T2** `cluster/baseline.py`: Bayesian binomial mixture baseline (own implementation).
 - [ ] **P3-T3** `cluster/pyclonevi.py`: wrapper with standardized input and output.
 - [ ] **P3-T4** `cluster/mobster.py`: wrapper, or document the integration route if R interop is required.
 - [ ] **P3-T5** CLI commands `qc` and `cluster`; unit tests plus a smoke test on simulated data.
@@ -296,3 +296,4 @@ Every PR must include: passing CI, new or updated tests, and a short note descri
 | 2026-11-28 | Implemented benchmark metrics for P2-T3. | Clone-count error, adjusted Rand index, ancestor-descendant accuracy, Brier score, and equal-width expected calibration error are available in a dependency-light benchmark module with hand-computed toy tests. | Project owner |
 | 2026-11-28 | Approved an initial scientific-viewer slice using simulator output only. | The first UI preview displays a bundled, clearly labeled Phase 2 simulated sample. It does not claim to implement the versioned export contract, inferred cohort/sample results, or the full P7-T3/P7-T4 scope; those remain pending their data contracts and pipeline outputs. | Project owner |
 | 2026-11-28 | Implemented QC estimate loading and purity/CN-aware VAF calculations for P3-T1. | An explicit TSV reader validates externally supplied purity/ploidy estimates and provenance; expected VAF and inverse CCF calculations account for purity, total copy number, and mutation multiplicity. Optional purity/ploidy re-estimation is deferred. | Project owner |
+| 2026-11-28 | Implemented the Bayesian binomial mixture baseline for P3-T2. | A deterministic variational finite mixture uses Beta priors for component VAFs and a symmetric Dirichlet prior for mixture weights, compares component counts by ELBO, and reports posterior assignment probabilities and component summaries. | Project owner |
