@@ -63,3 +63,32 @@ def test_cohort_command_writes_table(tmp_path) -> None:
 
     assert result.exit_code == 0
     assert (tmp_path / "cohort.tsv").exists()
+
+
+def test_simulate_command_writes_ground_truth(tmp_path) -> None:
+    result = runner.invoke(
+        app,
+        [
+            "simulate",
+            "--output-dir",
+            str(tmp_path),
+            "--seed",
+            "11",
+            "--depth",
+            "50",
+            "--purity",
+            "0.5",
+            "--clones",
+            "3",
+            "--topology",
+            "linear",
+            "--mutations",
+            "15",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert (tmp_path / "mutations.tsv").exists()
+    assert (tmp_path / "copy_number_segments.tsv").exists()
+    assert (tmp_path / "ground_truth.json").exists()
+    assert (tmp_path / "manifest.json").exists()

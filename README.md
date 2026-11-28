@@ -58,3 +58,11 @@ CRAM, and SRA files and requires an absolute URL for the dataset's verified lice
 ```powershell
 uv run clonetrace cohort --input-dir data/processed --output-dir data/processed --source gdc
 ```
+
+## Generate a deterministic simulated sample
+
+```powershell
+uv run clonetrace simulate --seed 42 --depth 100 --purity 0.8 --clones 3 --topology branching --mutations 40
+```
+
+The command writes canonical mutation and copy-number TSV files plus `ground_truth.json` and a SHA-256 manifest under `data/simulated/`.

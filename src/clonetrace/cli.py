@@ -1,5 +1,7 @@
 """CloneTrace command-line interface."""
 
+from typing import Literal, cast
+
 import typer
 
 from clonetrace import __version__
@@ -7,6 +9,7 @@ from clonetrace.ingest.cbioportal import ingest_cbioportal
 from clonetrace.ingest.cohort import build_cohort_table
 from clonetrace.ingest.gdc import ingest_gdc
 from clonetrace.ingest.geo import ingest_geo
+from clonetrace.simulate import simulate
 
 app = typer.Typer(
     name="clonetrace",
@@ -128,3 +131,35 @@ def cohort(
 
     path = build_cohort_table(input_dir=input_dir, output_dir=output_dir, source=source)
     typer.echo(f"Cohort table: {path}")
+
+
+@app.command("simulate")
+def simulate_command(
+    output_dir: str = typer.Option("data/simulated", "--output-dir"),
+    seed: int = typer.Option(1, "--seed"),
+    depth: int = typer.Option(100, "--depth"),
+    purity: float = typer.Option(0.8, "--purity"),
+    clone_count: int = typer.Option(3, "--clones"),
+    topology: str = typer.Option("branching", "--topology"),
+    mutation_count: int = typer.Option(40, "--mutations"),
+    cn_event_probability: float = typer.Option(0.25, "--cn-event-probability"),
+) -> None:
+    """Generate a deterministic simulated sample and ground truth."""
+
+    if topology not in {"linear", "branching"}:
+        raise typer.BadParameter("--topology must be linear or branching")
+    result = simulate(
+        output_dir=output_dir,
+        seed=seed,
+        depth=depth,
+        purity=purity,
+        clone_count=clone_count,
+        topology=cast(Literal["linear", "branching"], topology),
+        mutation_count=mutation_count,
+        cn_event_probability=cn_event_probability,
+    )
+    typer.echo(
+        f"Simulated {result.mutation_count} mutations across "
+        f"{result.clone_count} clones"
+    )
+    typer.echo(f"Ground truth: {result.ground_truth_path}")
