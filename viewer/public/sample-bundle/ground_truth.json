@@ -1,0 +1,337 @@
+{
+  "clone_tree": {
+    "clone_fractions": [
+      0.1803350203702889,
+      0.16253657675458041,
+      0.3388292811029314,
+      0.3182991217721991
+    ],
+    "parents": [
+      0,
+      0,
+      0,
+      2
+    ]
+  },
+  "config": {
+    "clone_count": 4,
+    "cn_event_probability": 0.8,
+    "depth": 100,
+    "mutation_count": 36,
+    "purity": 0.8,
+    "sample": "SIM-DEMO-BRCA",
+    "seed": 42,
+    "topology": "branching"
+  },
+  "copy_number_events": [
+    {
+      "chrom": "14",
+      "clone": 2,
+      "end": 16065764,
+      "minor_cn": 1.0,
+      "parent": 0,
+      "start": 2066449,
+      "total_cn": 3.0
+    },
+    {
+      "chrom": "20",
+      "clone": 3,
+      "end": 87219436,
+      "minor_cn": 2.0,
+      "parent": 2,
+      "start": 1890399,
+      "total_cn": 3.0
+    }
+  ],
+  "format_version": "1",
+  "mutation_assignments": [
+    {
+      "chrom": "17",
+      "clone": 1,
+      "gene": "TP53",
+      "mutation_id": 0,
+      "pos": 48956499,
+      "true_ccf": 0.16253657675458041
+    },
+    {
+      "chrom": "9",
+      "clone": 2,
+      "gene": "PIK3CA",
+      "mutation_id": 1,
+      "pos": 123140379,
+      "true_ccf": 0.3388292811029314
+    },
+    {
+      "chrom": "12",
+      "clone": 1,
+      "gene": "KRAS",
+      "mutation_id": 2,
+      "pos": 151292587,
+      "true_ccf": 0.16253657675458041
+    },
+    {
+      "chrom": "3",
+      "clone": 3,
+      "gene": "GATA3",
+      "mutation_id": 3,
+      "pos": 64047058,
+      "true_ccf": 0.3182991217721991
+    },
+    {
+      "chrom": "9",
+      "clone": 2,
+      "gene": "PTEN",
+      "mutation_id": 4,
+      "pos": 22986536,
+      "true_ccf": 0.3388292811029314
+    },
+    {
+      "chrom": "11",
+      "clone": 2,
+      "gene": "ERBB2",
+      "mutation_id": 5,
+      "pos": 33092731,
+      "true_ccf": 0.3388292811029314
+    },
+    {
+      "chrom": "21",
+      "clone": 3,
+      "gene": "TP53",
+      "mutation_id": 6,
+      "pos": 132996639,
+      "true_ccf": 0.3182991217721991
+    },
+    {
+      "chrom": "14",
+      "clone": 3,
+      "gene": "PIK3CA",
+      "mutation_id": 7,
+      "pos": 176766522,
+      "true_ccf": 0.3182991217721991
+    },
+    {
+      "chrom": "5",
+      "clone": 3,
+      "gene": "KRAS",
+      "mutation_id": 8,
+      "pos": 61562982,
+      "true_ccf": 0.3182991217721991
+    },
+    {
+      "chrom": "21",
+      "clone": 3,
+      "gene": "GATA3",
+      "mutation_id": 9,
+      "pos": 9361936,
+      "true_ccf": 0.3182991217721991
+    },
+    {
+      "chrom": "9",
+      "clone": 0,
+      "gene": "PTEN",
+      "mutation_id": 10,
+      "pos": 119947232,
+      "true_ccf": 0.1803350203702889
+    },
+    {
+      "chrom": "19",
+      "clone": 2,
+      "gene": "ERBB2",
+      "mutation_id": 11,
+      "pos": 175976285,
+      "true_ccf": 0.3388292811029314
+    },
+    {
+      "chrom": "2",
+      "clone": 1,
+      "gene": "TP53",
+      "mutation_id": 12,
+      "pos": 173115186,
+      "true_ccf": 0.16253657675458041
+    },
+    {
+      "chrom": "18",
+      "clone": 2,
+      "gene": "PIK3CA",
+      "mutation_id": 13,
+      "pos": 128077282,
+      "true_ccf": 0.3388292811029314
+    },
+    {
+      "chrom": "20",
+      "clone": 1,
+      "gene": "KRAS",
+      "mutation_id": 14,
+      "pos": 24143292,
+      "true_ccf": 0.16253657675458041
+    },
+    {
+      "chrom": "8",
+      "clone": 0,
+      "gene": "GATA3",
+      "mutation_id": 15,
+      "pos": 58752390,
+      "true_ccf": 0.1803350203702889
+    },
+    {
+      "chrom": "10",
+      "clone": 2,
+      "gene": "PTEN",
+      "mutation_id": 16,
+      "pos": 190220404,
+      "true_ccf": 0.3388292811029314
+    },
+    {
+      "chrom": "19",
+      "clone": 1,
+      "gene": "ERBB2",
+      "mutation_id": 17,
+      "pos": 195047300,
+      "true_ccf": 0.16253657675458041
+    },
+    {
+      "chrom": "8",
+      "clone": 2,
+      "gene": "TP53",
+      "mutation_id": 18,
+      "pos": 56319614,
+      "true_ccf": 0.3388292811029314
+    },
+    {
+      "chrom": "16",
+      "clone": 0,
+      "gene": "PIK3CA",
+      "mutation_id": 19,
+      "pos": 148811979,
+      "true_ccf": 0.1803350203702889
+    },
+    {
+      "chrom": "3",
+      "clone": 2,
+      "gene": "KRAS",
+      "mutation_id": 20,
+      "pos": 135430556,
+      "true_ccf": 0.3388292811029314
+    },
+    {
+      "chrom": "15",
+      "clone": 3,
+      "gene": "GATA3",
+      "mutation_id": 21,
+      "pos": 191150832,
+      "true_ccf": 0.3182991217721991
+    },
+    {
+      "chrom": "15",
+      "clone": 1,
+      "gene": "PTEN",
+      "mutation_id": 22,
+      "pos": 166722032,
+      "true_ccf": 0.16253657675458041
+    },
+    {
+      "chrom": "2",
+      "clone": 0,
+      "gene": "ERBB2",
+      "mutation_id": 23,
+      "pos": 75443469,
+      "true_ccf": 0.1803350203702889
+    },
+    {
+      "chrom": "21",
+      "clone": 3,
+      "gene": "TP53",
+      "mutation_id": 24,
+      "pos": 23615343,
+      "true_ccf": 0.3182991217721991
+    },
+    {
+      "chrom": "8",
+      "clone": 1,
+      "gene": "PIK3CA",
+      "mutation_id": 25,
+      "pos": 87383070,
+      "true_ccf": 0.16253657675458041
+    },
+    {
+      "chrom": "4",
+      "clone": 1,
+      "gene": "KRAS",
+      "mutation_id": 26,
+      "pos": 4209662,
+      "true_ccf": 0.16253657675458041
+    },
+    {
+      "chrom": "1",
+      "clone": 0,
+      "gene": "GATA3",
+      "mutation_id": 27,
+      "pos": 90049164,
+      "true_ccf": 0.1803350203702889
+    },
+    {
+      "chrom": "22",
+      "clone": 3,
+      "gene": "PTEN",
+      "mutation_id": 28,
+      "pos": 76570774,
+      "true_ccf": 0.3182991217721991
+    },
+    {
+      "chrom": "11",
+      "clone": 1,
+      "gene": "ERBB2",
+      "mutation_id": 29,
+      "pos": 186358375,
+      "true_ccf": 0.16253657675458041
+    },
+    {
+      "chrom": "7",
+      "clone": 1,
+      "gene": "TP53",
+      "mutation_id": 30,
+      "pos": 41246338,
+      "true_ccf": 0.16253657675458041
+    },
+    {
+      "chrom": "1",
+      "clone": 2,
+      "gene": "PIK3CA",
+      "mutation_id": 31,
+      "pos": 182663197,
+      "true_ccf": 0.3388292811029314
+    },
+    {
+      "chrom": "3",
+      "clone": 0,
+      "gene": "KRAS",
+      "mutation_id": 32,
+      "pos": 101024997,
+      "true_ccf": 0.1803350203702889
+    },
+    {
+      "chrom": "1",
+      "clone": 3,
+      "gene": "GATA3",
+      "mutation_id": 33,
+      "pos": 92632353,
+      "true_ccf": 0.3182991217721991
+    },
+    {
+      "chrom": "12",
+      "clone": 2,
+      "gene": "PTEN",
+      "mutation_id": 34,
+      "pos": 122492412,
+      "true_ccf": 0.3388292811029314
+    },
+    {
+      "chrom": "11",
+      "clone": 0,
+      "gene": "ERBB2",
+      "mutation_id": 35,
+      "pos": 138947558,
+      "true_ccf": 0.1803350203702889
+    }
+  ]
+}

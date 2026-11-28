@@ -1,0 +1,18 @@
+{
+  "config": {
+    "clone_count": 4,
+    "cn_event_probability": 0.8,
+    "depth": 100,
+    "mutation_count": 36,
+    "purity": 0.8,
+    "sample": "SIM-DEMO-BRCA",
+    "seed": 42,
+    "topology": "branching"
+  },
+  "files": {
+    "copy_number_segments.tsv": "57951d535b6ef4290daf94df2941d379b2b3daed6a3879400322259fa0cc08e2",
+    "ground_truth.json": "86a89036b2928c668093058f588b1b498f985ded70a65ab229ca4e13ed3f4c41",
+    "mutations.tsv": "ce19472475893b972d7cf75506cc68476380ace283868136683636cbd3b77246"
+  },
+  "format_version": "1"
+}

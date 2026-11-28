@@ -1,0 +1,3 @@
+sample	chrom	start	end	total_cn	minor_cn
+SIM-DEMO-BRCA	14	2066449	16065764	3.0	1.0
+SIM-DEMO-BRCA	20	1890399	87219436	3.0	2.0
