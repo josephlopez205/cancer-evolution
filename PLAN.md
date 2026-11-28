@@ -163,7 +163,7 @@ Legend: `[ ]` not started, `[x]` done, `[REVIEW]` needs human approval of the pl
 
 ### Phase 3: Core pipeline (Weeks 7–9)
 
-- [ ] **P3-T1** `qc`: purity and ploidy handling (ingest estimates; optional re-estimation), VAF adjustment for copy number and multiplicity.
+- [x] **P3-T1** `qc`: purity and ploidy handling (ingest estimates; optional re-estimation), VAF adjustment for copy number and multiplicity.
 - [ ] **P3-T2** `cluster/baseline.py`: Bayesian binomial mixture baseline (own implementation).
 - [ ] **P3-T3** `cluster/pyclonevi.py`: wrapper with standardized input and output.
 - [ ] **P3-T4** `cluster/mobster.py`: wrapper, or document the integration route if R interop is required.
@@ -294,3 +294,5 @@ Every PR must include: passing CI, new or updated tests, and a short note descri
 | 2026-11-28 | Implemented the deterministic clonal simulator for P2-T1. | The simulator generates linear or branching clone trees, clone mutation assignments, binomial read counts, configurable purity/depth/clones/copy-number events, canonical mutation and segment TSVs, ground-truth JSON, and a SHA-256 manifest from a fixed seed. | Project owner |
 | 2026-11-28 | Implemented the benchmark scenario grid for P2-T2. | The grid covers 30x/60x/100x/200x depth, 0.3/0.5/0.8 purity, 1–6 clones, and linear/branching topology with 20 seeded replicates by default. It writes a TSV index and aggregate JSON manifest. | Project owner |
 | 2026-11-28 | Implemented benchmark metrics for P2-T3. | Clone-count error, adjusted Rand index, ancestor-descendant accuracy, Brier score, and equal-width expected calibration error are available in a dependency-light benchmark module with hand-computed toy tests. | Project owner |
+| 2026-11-28 | Approved an initial scientific-viewer slice using simulator output only. | The first UI preview displays a bundled, clearly labeled Phase 2 simulated sample. It does not claim to implement the versioned export contract, inferred cohort/sample results, or the full P7-T3/P7-T4 scope; those remain pending their data contracts and pipeline outputs. | Project owner |
+| 2026-11-28 | Implemented QC estimate loading and purity/CN-aware VAF calculations for P3-T1. | An explicit TSV reader validates externally supplied purity/ploidy estimates and provenance; expected VAF and inverse CCF calculations account for purity, total copy number, and mutation multiplicity. Optional purity/ploidy re-estimation is deferred. | Project owner |

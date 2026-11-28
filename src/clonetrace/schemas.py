@@ -90,6 +90,29 @@ class CopyNumberSegment(CanonicalModel):
         return self
 
 
+class PurityPloidyEstimate(CanonicalModel):
+    """Externally estimated sample purity and/or tumor ploidy with provenance."""
+
+    sample: str = Field(validation_alias=AliasChoices("sample", "sample_id"))
+    purity: float | None = Field(default=None, ge=0, le=1, allow_inf_nan=False)
+    ploidy: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    source: str
+    method: str | None = None
+
+    @field_validator("sample", "source")
+    @classmethod
+    def validate_nonempty(cls, value: str) -> str:
+        if not value:
+            raise ValueError("must not be empty")
+        return value
+
+    @model_validator(mode="after")
+    def require_estimate(self) -> "PurityPloidyEstimate":
+        if self.purity is None and self.ploidy is None:
+            raise ValueError("at least one of purity or ploidy must be provided")
+        return self
+
+
 class Survival(CanonicalModel):
     """Survival outcome for a clinical record."""
 

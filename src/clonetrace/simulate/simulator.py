@@ -8,6 +8,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Literal
 
+from clonetrace.qc.vaf_cn import expected_vaf
 from clonetrace.schemas import CopyNumberSegment, MutationRecord
 
 Topology = Literal["linear", "branching"]
@@ -176,9 +177,11 @@ def simulate(
                 copy_number = float(event["total_cn"])
                 break
 
-        denominator = 2 * (1 - purity) + purity * copy_number
-        alt_probability = purity * ccf / denominator
-        alt_probability = min(max(alt_probability, 0.0), 1.0)
+        alt_probability = expected_vaf(
+            ccf=ccf,
+            purity=purity,
+            total_cn=copy_number,
+        )
         observed_depth = max(1, int(rng.gauss(depth, depth * 0.05)))
         alt_count = _draw_binomial(rng, observed_depth, alt_probability)
         ref_count = observed_depth - alt_count

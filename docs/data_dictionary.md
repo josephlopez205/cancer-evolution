@@ -31,6 +31,25 @@ Canonical segment records are one row per copy-number segment.
 | `total_cn` | float | yes | Estimated total copy number; non-negative |
 | `minor_cn` | float | yes | Estimated minor allele copy number; no greater than `total_cn` |
 
+## `purity_ploidy.tsv`
+
+Optional sample-level purity/ploidy estimates supplied by an external method or source. At least
+one of `purity` and `ploidy` must be provided on each row. Re-estimation is not performed by this
+input loader.
+
+| Column | Type | Required | Definition |
+|---|---|---:|---|
+| `sample` | string | yes | Sample or aliquot identifier |
+| `purity` | float or blank | yes | Tumor purity estimate in the range [0, 1] |
+| `ploidy` | float or blank | yes | Positive average tumor ploidy estimate |
+| `source` | string | yes | Provenance, such as the source file or tool output |
+| `method` | string or blank | no | Estimation method, when known |
+
+Purity-adjusted cancer cell fraction uses the diploid-normal model:
+`CCF = VAF * (purity * total_cn + 2 * (1 - purity)) / (purity * multiplicity)`.
+The inverse expected-VAF calculation uses the same assumptions. CCF estimates above 1 are retained
+and should be interpreted as sampling noise or a model mismatch, not silently clipped.
+
 ## `copy_number_calls.tsv`
 
 Curated discrete gene-level CNA calls, currently supplied by cBioPortal.

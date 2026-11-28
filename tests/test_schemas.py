@@ -8,6 +8,7 @@ from clonetrace.schemas import (
     CopyNumberTable,
     Mutation,
     MutationRecord,
+    PurityPloidyEstimate,
 )
 
 
@@ -139,4 +140,20 @@ def test_records_reject_unknown_fields() -> None:
             ref_count=20,
             alt_count=5,
             unknown="value",
+        )
+
+
+def test_purity_ploidy_estimate_rejects_out_of_range_values() -> None:
+    with pytest.raises(ValidationError):
+        PurityPloidyEstimate(
+            sample="sample-1",
+            purity=1.1,
+            source="estimate.tsv",
+        )
+
+    with pytest.raises(ValidationError):
+        PurityPloidyEstimate(
+            sample="sample-1",
+            ploidy=0,
+            source="estimate.tsv",
         )

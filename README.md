@@ -76,3 +76,17 @@ uv run clonetrace simulate-grid --seed 1 --replicates 20 --mutations 40
 This generates all depth, purity, clone-count, and topology combinations specified in P2-T2,
 with 20 seeded replicates per scenario. The grid index and aggregate manifest are written under
 `data/simulated/grid/`.
+
+## Preview the Phase 2 simulation viewer
+
+The early scientific viewer displays a bundled, simulator-generated sample with its clone tree,
+mutation read counts, and copy-number events. The values are ground truth for a simulated sample,
+not inferred clinical results.
+
+```powershell
+cd viewer
+npm install
+npm run dev
+```
+
+See [viewer/README.md](viewer/README.md) for validation commands and the current data limitations.
